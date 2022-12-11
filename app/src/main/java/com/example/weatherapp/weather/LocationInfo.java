@@ -10,8 +10,7 @@ import java.util.List;
 
 
 public class LocationInfo {
-    private String latitude;
-    private String longitude;
+    private Double latitude,longitude;
 
     public void getLocationFromAddress(String strAddress,Context context) {
 
@@ -27,26 +26,26 @@ public class LocationInfo {
             }
             Address location = address.get(0);
             Log.d("TAG", "getLocationFromAddress: "+location);
-            setLatitude(Double.toString(location.getLatitude()));
-            setLongitude(Double.toString(location.getLongitude()));
+            setLatitude(location.getLatitude());
+            setLongitude(location.getLongitude());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public String getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
-    public String getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 }

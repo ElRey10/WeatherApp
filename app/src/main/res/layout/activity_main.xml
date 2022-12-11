@@ -88,7 +88,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-
+        <ImageView
+            android:id="@+id/like"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:clickable="true"
+            android:src="@drawable/iconweather_foreground"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

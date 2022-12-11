@@ -1,6 +1,7 @@
 package com.example.weatherapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -15,6 +16,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.weatherapp.weather.LocationInfo;
 import com.example.weatherapp.weather.ParseXmlSoapRequest;
@@ -23,6 +25,7 @@ import com.example.weatherapp.weather.XmlParser;
 
 import java.net.InetAddress;
 import java.text.BreakIterator;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,9 +33,12 @@ public class MainActivity extends AppCompatActivity {
     LocationInfo locationInfo;
     XmlParser xmlParser;
     TextView maxTemp,minTemp,avgTemp,locName;
-    ImageView loading;
+    ImageView loading,like;
     RecyclerView recyclerView;
+    String location;
+    ArrayList<LocationName> locationNames= new ArrayList<>();
     private String TAG="MAINACTIVITY";
+    private LikedLocationAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +52,17 @@ public class MainActivity extends AppCompatActivity {
         minTemp = findViewById(R.id.minTemp);
         locName = findViewById(R.id.locName);
         loading = findViewById(R.id.loading);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        like = findViewById(R.id.like);
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         Log.d(TAG, "onCreate: network "+isNetworkConnected()+" internet: "+isInternetAvailable());
         searchView = findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 Log.d(TAG, "onQueryTextSubmit: " + s);
+                location = s;
                 clickSearch(s);
                 return false;
             }
@@ -65,8 +75,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Log.d(TAG, "onCreate: ");
-
+        like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                locationNames.add(new LocationName(location));
+                adapter=new LikedLocationAdapter(getApplicationContext(),locationNames);
+                recyclerView.setAdapter(adapter);
+                adapter.notifyItemChanged(locationNames.size()-1);
+            }
+        });
     }
+
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -113,9 +132,4 @@ public class MainActivity extends AppCompatActivity {
             avgTemp.setText("Avg Temp: "+Temperature.getAvgTempValue());
         });
     }
-
-
-
-
-
 }

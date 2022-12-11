@@ -1,4 +1,4 @@
-package com.example.weatherapp;
+package com.example.weatherapp.UI;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,28 +16,29 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.weatherapp.weather.LocationInfo;
-import com.example.weatherapp.weather.ParseXmlSoapRequest;
-import com.example.weatherapp.weather.Temperature;
-import com.example.weatherapp.weather.XmlParser;
+import com.example.weatherapp.RecyclerView.LikedLocationAdapter;
+import com.example.weatherapp.Location.LocationName;
+import com.example.weatherapp.R;
+import com.example.weatherapp.RecyclerView.SelectListener;
+import com.example.weatherapp.Location.LocationInfo;
+import com.example.weatherapp.Weather.Temperature;
+import com.example.weatherapp.ConnectandParse.XmlParser;
 
 import java.net.InetAddress;
-import java.text.BreakIterator;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SelectListener {
 
     private SearchView searchView;
     LocationInfo locationInfo;
     XmlParser xmlParser;
-    TextView maxTemp,minTemp,avgTemp,locName;
-    ImageView loading,like;
+    TextView maxTemp, minTemp, avgTemp, locName, likedTextHead;
+    ImageView loading, like;
     RecyclerView recyclerView;
     String location;
-    ArrayList<LocationName> locationNames= new ArrayList<>();
-    private String TAG="MAINACTIVITY";
+    ArrayList<LocationName> locationNames = new ArrayList<>();
+    private String TAG = "MAINACTIVITY";
     private LikedLocationAdapter adapter;
 
     @Override
@@ -52,11 +53,13 @@ public class MainActivity extends AppCompatActivity {
         minTemp = findViewById(R.id.minTemp);
         locName = findViewById(R.id.locName);
         loading = findViewById(R.id.loading);
+        likedTextHead = findViewById(R.id.city_text_view);
         like = findViewById(R.id.like);
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        Log.d(TAG, "onCreate: network "+isNetworkConnected()+" internet: "+isInternetAvailable());
+        adapter = new LikedLocationAdapter(getApplicationContext(), locationNames, this);
+        recyclerView.setAdapter(adapter);
+        Log.d(TAG, "onCreate: network " + isNetworkConnected() + " internet: " + isInternetAvailable());
         searchView = findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -69,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                Log.d(TAG, "onQueryTextChange: "+s);
+                Log.d(TAG, "onQueryTextChange: " + s);
                 return false;
             }
         });
@@ -78,10 +81,9 @@ public class MainActivity extends AppCompatActivity {
         like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                likedTextHead.setVisibility(View.VISIBLE);
                 locationNames.add(new LocationName(location));
-                adapter=new LikedLocationAdapter(getApplicationContext(),locationNames);
-                recyclerView.setAdapter(adapter);
-                adapter.notifyItemChanged(locationNames.size()-1);
+                adapter.notifyItemChanged(locationNames.size() - 1);
             }
         });
     }
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
+
     public boolean isInternetAvailable() {
         try {
             InetAddress ipAddr = InetAddress.getByName("google.com");
@@ -101,35 +104,42 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }
+
     @SuppressLint("SetTextI18n")
-    private void clickSearch(String s){
+    private void clickSearch(String s) {
         Animation iconAnimation = AnimationUtils.loadAnimation(this, R.anim.icon_anim2);
         iconAnimation.setRepeatCount(Animation.INFINITE);
         loading.startAnimation(iconAnimation);
         loading.setVisibility(View.VISIBLE);
+        like.setVisibility(View.VISIBLE);
         minTemp.setVisibility(View.GONE);
         maxTemp.setVisibility(View.GONE);
         avgTemp.setVisibility(View.GONE);
-        locName.setText("Location:\n"+s);
-        locationInfo.getLocationFromAddress(s,getApplicationContext());
-        ViewGroup.MarginLayoutParams params1= (ViewGroup.MarginLayoutParams) searchView.getLayoutParams();
-        params1.topMargin=86;
+        locName.setText("Location:\n" + s);
+        locationInfo.getLocationFromAddress(s, getApplicationContext());
+        ViewGroup.MarginLayoutParams params1 = (ViewGroup.MarginLayoutParams) searchView.getLayoutParams();
+        params1.topMargin = 86;
         searchView.setLayoutParams(params1);
-        xmlParser.xmlParse(locationInfo.getLatitude(),locationInfo.getLongitude());
+        xmlParser.xmlParse(locationInfo.getLatitude(), locationInfo.getLongitude());
 
     }
 
     @SuppressLint("SetTextI18n")
-    void addFinishedObserver(){
-        xmlParser.getFinished().observe(this,show->{
-            Log.d(TAG, "addFinishedObserver: show "+show);
+    void addFinishedObserver() {
+        xmlParser.getFinished().observe(this, show -> {
+            Log.d(TAG, "addFinishedObserver: show " + show);
             loading.setVisibility(View.GONE);
             minTemp.setVisibility(View.VISIBLE);
             maxTemp.setVisibility(View.VISIBLE);
             avgTemp.setVisibility(View.VISIBLE);
-            minTemp.setText("Min Temp:\n"+Temperature.getMinTempValue());
-            maxTemp.setText("Max Temp:\n"+Temperature.getMaxTempValue());
-            avgTemp.setText("Avg Temp: "+Temperature.getAvgTempValue());
+            minTemp.setText("Min Temp:\n" + Temperature.getMinTempValue());
+            maxTemp.setText("Max Temp:\n" + Temperature.getMaxTempValue());
+            avgTemp.setText("Avg Temp: " + Temperature.getAvgTempValue());
         });
+    }
+
+    @Override
+    public void onItemClicked(LocationName locationName) {
+        clickSearch(locationName.getLocName());
     }
 }

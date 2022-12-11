@@ -1,9 +1,10 @@
-package com.example.weatherapp;
+package com.example.weatherapp.Location;
 
 public class LocationName {
     String locName;
-    LocationName(String locName){
-        this.locName=locName;
+
+    public LocationName(String locName) {
+        this.locName = locName;
     }
 
     public String getLocName() {

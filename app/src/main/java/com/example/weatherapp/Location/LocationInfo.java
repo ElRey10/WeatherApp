@@ -1,31 +1,33 @@
-package com.example.weatherapp.weather;
+package com.example.weatherapp.Location;
 
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;
 import android.widget.Toast;
+
 import java.io.IOException;
 import java.util.List;
 
 
 public class LocationInfo {
-    private Double latitude,longitude;
+    private Double latitude, longitude;
+    private static final String TAG = "LocationInfo";
 
-    public void getLocationFromAddress(String strAddress,Context context) {
+    public void getLocationFromAddress(String strAddress, Context context) {
 
         Geocoder coder = new Geocoder(context);
         List<Address> address;
 
         try {
             address = coder.getFromLocationName(strAddress, 5);
-            Log.d("TAG", "getLocationFromAddress: "+address.toString());
+            Log.d(TAG, "getLocationFromAddress: " + address.toString());
             if (address.isEmpty()) {
                 Toast.makeText(context, "Address Not Found", Toast.LENGTH_SHORT).show();
                 throw new IOException();
             }
             Address location = address.get(0);
-            Log.d("TAG", "getLocationFromAddress: "+location);
+            Log.d(TAG, "getLocationFromAddress: " + location);
             setLatitude(location.getLatitude());
             setLongitude(location.getLongitude());
         } catch (IOException e) {

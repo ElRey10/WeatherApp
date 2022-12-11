@@ -1,20 +1,18 @@
-package com.example.weatherapp.weather;
+package com.example.weatherapp.Weather;
 
 import android.util.Log;
 
-import com.example.weatherapp.MainActivity;
-import com.example.weatherapp.Utils;
+import com.example.weatherapp.Utils.Utils;
 
-import org.checkerframework.checker.units.qual.A;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import okhttp3.internal.Util;
 
 public class Temperature {
+    private static final String TAG = "Temperature";
     ArrayList<String> maxTempValues = new ArrayList<>();
     ArrayList<String> minTempValues = new ArrayList<>();
     ArrayList<String> tempValues = new ArrayList<>();
@@ -32,7 +30,7 @@ public class Temperature {
                 maxTempValues.add(json.getString("content"));
             }
             setMaxTempValue(Collections.max(maxTempValues));
-            Log.d("TAG", "extractMaxTemp: " + maxTempValue);
+            Log.d(TAG, "extractMaxTemp: " + maxTempValue);
             return maxTempValue;
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,7 +50,7 @@ public class Temperature {
                 minTempValues.add(json.getString("content"));
             }
             setMinTempValue(Collections.min(minTempValues));
-            Log.d("TAG", "extractMinTemp: " + minTempValue);
+            Log.d(TAG, "extractMinTemp: " + minTempValue);
             return minTempValue;
         } catch (Exception e) {
             e.printStackTrace();
@@ -70,7 +68,7 @@ public class Temperature {
                 JSONObject json = avgTemp.getJSONObject(i);
                 tempValues.add(json.getString("content"));
             }
-            Log.d("TAG", "averageTemp: " + tempValues);
+            Log.d(TAG, "averageTemp: " + tempValues);
             setAvgTempValue(utils.doubleToString((tempValues.stream().mapToDouble(Double::parseDouble).average()).getAsDouble()));
             return avgTempValue;
         } catch (Exception e) {

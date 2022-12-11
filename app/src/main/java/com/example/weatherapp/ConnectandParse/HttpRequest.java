@@ -1,4 +1,4 @@
-package com.example.weatherapp.weather;
+package com.example.weatherapp.ConnectandParse;
 
 import android.util.Log;
 

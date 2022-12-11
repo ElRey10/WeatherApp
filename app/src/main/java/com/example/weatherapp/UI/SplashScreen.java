@@ -8,11 +8,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.R;
 
 public class SplashScreen extends Activity {
     private ImageView iconWeather;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +27,7 @@ public class SplashScreen extends Activity {
                 startActivity(i);
                 finish();
             }
-        }, 3*1000);
+        }, 3 * 1000);
     }
 
 }
